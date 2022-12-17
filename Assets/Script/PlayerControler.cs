@@ -1,24 +1,23 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerControler : MonoBehaviour
 {
     public float forward = 5;
     public float sens;
-
     private Camera maincam;
-    public Rigidbody componentRigidbody;
-
+    public Rigidbody player;
     private Vector2 mousepos;
     private float sidewaysSpeed;
-
+    public int HP;
+    public int Healpoint;
+    public TextMeshPro PlayerHPText;
     private void Start()
     {
         maincam = Camera.main;
-        componentRigidbody = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -37,13 +36,23 @@ public class PlayerControler : MonoBehaviour
             sidewaysSpeed += delta.x * sens;
             mousepos = maincam.ScreenToViewportPoint(Input.mousePosition);
         }
+        PlayerHPText.text = HP.ToString();
     }
 
     private void FixedUpdate()
     {
         if (Mathf.Abs(sidewaysSpeed) > 4) sidewaysSpeed = 4 * Mathf.Sign(sidewaysSpeed);
-        componentRigidbody.velocity = new Vector3(sidewaysSpeed * 5,0, forward);
+        player.velocity = new Vector3(sidewaysSpeed * 5,0, forward);
 
         sidewaysSpeed = 0;
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Food")
+        {
+            Healpoint = collision.gameObject.GetComponent<EatSystem>().Healpoint;
+            HP += Healpoint;
+            Destroy(collision.gameObject);
+        }
     }
 }
