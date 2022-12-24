@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class EatSystem : MonoBehaviour
 {
-    public int Healpoint;
+    public int Value;
     public TextMeshPro HPText;
     private void Start()
     {
-        HPText.text = Healpoint.ToString();
+        HPText.text = Value.ToString();
     }
 }

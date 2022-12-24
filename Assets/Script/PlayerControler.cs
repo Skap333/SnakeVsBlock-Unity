@@ -2,7 +2,10 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class PlayerControler : MonoBehaviour
 {
@@ -11,13 +14,25 @@ public class PlayerControler : MonoBehaviour
     private Camera maincam;
     public Rigidbody player;
     private Vector2 mousepos;
+ 
     private float sidewaysSpeed;
-    public int HP;
-    public int Healpoint;
+    private SnakeBalls snakeBalls;
+    public int HP = 1;
+    public int Length = 1;
+    public int Value;
     public TextMeshPro PlayerHPText;
+    public GameObject wincanvas;
+    private GameObject Block;
     private void Start()
     {
         maincam = Camera.main;
+        snakeBalls = GetComponent<SnakeBalls>();
+        HP += Value;
+        for (int i = 0; i < Value; i++)
+        {
+            Length++;
+            snakeBalls.AddBall();
+        }
     }
 
     private void Update()
@@ -50,9 +65,40 @@ public class PlayerControler : MonoBehaviour
     {
         if (collision.gameObject.tag == "Food")
         {
-            Healpoint = collision.gameObject.GetComponent<EatSystem>().Healpoint;
-            HP += Healpoint;
+            Value = collision.gameObject.GetComponent<EatSystem>().Value;
+            HP += Value;
             Destroy(collision.gameObject);
+            for (int i = 0; i < Value; i++)
+            {
+                Length++;
+                snakeBalls.AddBall();
+            }
+        }
+        if (collision.gameObject.tag == "Block")
+        {
+            Value = collision.gameObject.GetComponent<BoxDeath>().Value;
+            Block = collision.gameObject.GetComponent<BoxDeath>().BlockWall;   
+            StartCoroutine(BlockKilling());
+            if (Value == 0)
+            {
+                Destroy(Block);
+            }
+        }
+        if (collision.gameObject.tag == "finish")
+        {
+            forward = 0;
+            wincanvas.SetActive(true);
+        }
+    }
+    IEnumerator BlockKilling()
+    {
+        while (true)
+        {
+            HP--;
+            Value--;
+            Length--;
+            snakeBalls.RemoveBall();
+            yield return new WaitForSeconds(0.2f);
         }
     }
 }

@@ -5,31 +5,13 @@ using UnityEngine;
 
 public class BoxDeath : MonoBehaviour
 {
-    public int health;
-    public GameObject GameObject;
+    public int Value;
+    public GameObject BlockWall;
     public TextMeshPro HPText;
-    public PlayerControler player;
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        StartCoroutine(BlockKilling());
-    }
-    IEnumerator BlockKilling()
-    {
-        while (true)
-        {
-            health--;
-            player.HP--;
-            if (health == 0)
-            {
-                Destroy(GameObject);
-            }
-            yield return new WaitForSeconds(0.2f);
-        }        
-    }
+   
     private void Update()
     {
-        HPText.text = health.ToString();
+        HPText.text = Value.ToString();
     }
 
 }
