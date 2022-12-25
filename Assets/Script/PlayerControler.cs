@@ -14,7 +14,7 @@ public class PlayerControler : MonoBehaviour
     private Camera maincam;
     public Rigidbody player;
     private Vector2 mousepos;
- 
+    public Transform WorkHead;
     private float sidewaysSpeed;
     private SnakeBalls snakeBalls;
     public int HP = 1;
@@ -23,6 +23,7 @@ public class PlayerControler : MonoBehaviour
     public TextMeshPro PlayerHPText;
     public GameObject wincanvas;
     private GameObject Block;
+    public GameObject losecanvas;
     private void Start()
     {
         maincam = Camera.main;
@@ -37,6 +38,7 @@ public class PlayerControler : MonoBehaviour
 
     private void Update()
     {
+        WorkHead.transform.position = player.position;
         if (Input.GetMouseButtonDown(0))
         {
             mousepos = maincam.ScreenToViewportPoint(Input.mousePosition);
@@ -77,11 +79,21 @@ public class PlayerControler : MonoBehaviour
         if (collision.gameObject.tag == "Block")
         {
             Value = collision.gameObject.GetComponent<BoxDeath>().Value;
-            Block = collision.gameObject.GetComponent<BoxDeath>().BlockWall;   
-            StartCoroutine(BlockKilling());
-            if (Value == 0)
+            Block = collision.gameObject.GetComponent<BoxDeath>().BlockWall;
+            if (Value >= HP)
             {
+                forward = 0;
+                losecanvas.SetActive(true);
+            }
+            else
+            {
+                HP-= Value;
                 Destroy(Block);
+                for (int i = 0; i < Value; i++)
+                {
+                    Length--;
+                    snakeBalls.RemoveBall();
+                }
             }
         }
         if (collision.gameObject.tag == "finish")
@@ -90,15 +102,5 @@ public class PlayerControler : MonoBehaviour
             wincanvas.SetActive(true);
         }
     }
-    IEnumerator BlockKilling()
-    {
-        while (true)
-        {
-            HP--;
-            Value--;
-            Length--;
-            snakeBalls.RemoveBall();
-            yield return new WaitForSeconds(0.2f);
-        }
-    }
+    
 }
