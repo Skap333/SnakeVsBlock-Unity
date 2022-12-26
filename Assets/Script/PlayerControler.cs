@@ -1,11 +1,5 @@
-using Newtonsoft.Json.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Playables;
 
 public class PlayerControler : MonoBehaviour
 {
@@ -82,7 +76,9 @@ public class PlayerControler : MonoBehaviour
             Block = collision.gameObject.GetComponent<BoxDeath>().BlockWall;
             if (Value >= HP)
             {
-                forward = 0;
+                AudioSource Music = GetComponent<AudioSource>();
+                Music.Stop();
+                forward = 0;   
                 losecanvas.SetActive(true);
             }
             else
@@ -98,6 +94,8 @@ public class PlayerControler : MonoBehaviour
         }
         if (collision.gameObject.tag == "finish")
         {
+            AudioSource Music = GetComponent<AudioSource>();
+            Music.Stop();
             forward = 0;
             wincanvas.SetActive(true);
         }
